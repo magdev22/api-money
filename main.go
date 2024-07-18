@@ -4,25 +4,40 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"log"
-	"net/http"
 
+	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 )
-
-func main() {
-	http.HandleFunc("/user", GetUserHandler)
-	err := http.ListenAndServe("localhost:8080", nil)
-	if err != nil {
-		log.Fatal("Server error:", err)
-	}
-}
 
 type User struct {
 	ID      int    `json:"id"`
 	Name    string `json:"name"`
 	Surname string `json:"surname"`
 	Bill    int    `json:"bill"`
+}
+
+func main() {
+	r := gin.Default()
+
+	r.GET("/user", func(c *gin.Context) {
+		db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/aa")
+		if err != nil {
+			c.JSON(500, gin.H{"error": "Database connection error"})
+			return
+		}
+		defer db.Close()
+
+		userJSON, err := GetAllUsers(db)
+		if err != nil {
+			c.JSON(500, gin.H{"error": "Error getting users"})
+			return
+		}
+
+		c.Header("Content-Type", "application/json")
+		c.String(200, string(userJSON))
+	})
+
+	r.Run(":8080")
 }
 
 func GetAllUsers(db *sql.DB) ([]byte, error) {
@@ -47,24 +62,6 @@ func GetAllUsers(db *sql.DB) ([]byte, error) {
 	}
 
 	return usersJSON, nil
-}
-
-func GetUserHandler(w http.ResponseWriter, r *http.Request) {
-	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/aa")
-	if err != nil {
-		http.Error(w, "Database connection error", http.StatusInternalServerError)
-		return
-	}
-	defer db.Close()
-
-	userJSON, err := GetAllUsers(db)
-	if err != nil {
-		http.Error(w, "Error getting users", http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(userJSON)
 }
 
 func updateUserById(db *sql.DB, name string, surname string, bill int, id int) error {
