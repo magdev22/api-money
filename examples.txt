@@ -1,0 +1,23 @@
+#####
+curl http://localhost:8080/bills
+
+####
+curl http://localhost:8080/bills/2
+
+##### add user
+curl http://localhost:8080/bills \1
+    --include \
+    --header "Content-Type: application/json" \
+    --request "POST" \
+    --data '{"id": "1","name": "isa","surname": "magomedov","balance": 52.52}'
+
+#### udate user
+curl  http://localhost:8080/updateBills/1
+    --include \
+    --header "Content-Type: application/json" \
+    --request "POST" \
+    --data '{"id": "1","name": "bhbjh","surname": "nj","balance": 0}'
+####
+
+curl  -X "DELETE" http://localhost:8080/bills/1
+###
