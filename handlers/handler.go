@@ -14,6 +14,26 @@ type UserHandler struct {
 	Db *sql.DB
 }
 
+var querryString = "CREATE TABLE users (id INT AUTO_INCREMENT PRIMARY KEY,name VARCHAR(20),surname VARCHAR(20),bill INT(20))"
+
+func (h *UserHandler) CreateTableUsers(c *gin.Context) {
+	rows, err := h.Db.Query(querryString)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error creating database"})
+		return
+	}
+	defer rows.Close()
+
+	users := []model.User{}
+	for rows.Next() {
+		var user model.User
+		if err := rows.Scan(&user.ID, &user.Name, &user.Surname, &user.Bill); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Error scanning users"})
+			return
+		}
+		users = append(users, user)
+	}
+}
 func (h *UserHandler) GetAllUsers(c *gin.Context) {
 	rows, err := h.Db.Query("SELECT * FROM users")
 	if err != nil {
