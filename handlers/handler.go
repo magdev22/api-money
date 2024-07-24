@@ -4,6 +4,7 @@ import (
 	model "api/data"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -141,4 +142,50 @@ func (h *UserHandler) UpdateUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "User updated successfully"})
+}
+
+func (h *UserHandler) TransferBalanceHandler(c *gin.Context) {
+	firstUserID, _ := strconv.Atoi(c.PostForm("firstUserID"))
+	secondUserID, _ := strconv.Atoi(c.PostForm("secondUserID"))
+	summa, _ := strconv.Atoi(c.PostForm("summa"))
+	perevod, _ := strconv.ParseBool(c.PostForm("perevod"))
+
+	var firstUser model.User
+	err := h.Db.QueryRow("SELECT * FROM users WHERE id = ?", firstUserID).Scan(&firstUser.ID, &firstUser.Name, &firstUser.Surname, &firstUser.Bill)
+	if err != nil {
+		c.JSON(404, gin.H{"error": "First user not found"})
+		return
+	}
+
+	var secondUser model.User
+	err = h.Db.QueryRow("SELECT * FROM users WHERE id = ?", secondUserID).Scan(&secondUser.ID, &secondUser.Name, &secondUser.Surname, &secondUser.Bill)
+	if err != nil {
+		c.JSON(404, gin.H{"error": "Second user not found"})
+		return
+	}
+
+	if perevod {
+		if firstUser.Bill >= summa {
+			firstUser.Bill -= summa
+			secondUser.Bill += summa
+
+			h.UpdateUserBalanceInDB(&firstUser)
+			h.UpdateUserBalanceInDB(&secondUser)
+
+			c.JSON(200, gin.H{"message": "Transfer successful"})
+		} else {
+			c.JSON(400, gin.H{"error": "Insufficient balance"})
+		}
+	} else {
+		c.JSON(400, gin.H{"error": "Unsupported operation type"})
+	}
+}
+
+func (h *UserHandler) UpdateUserBalanceInDB(user *model.User) {
+	_, err := h.Db.Exec("UPDATE users SET balance = ? WHERE id = ?", user.Bill, user.ID)
+	if err != nil {
+		fmt.Println("Error updating user balance in the database:", err)
+	}
+	fmt.Println("User balance updated successfully")
+
 }

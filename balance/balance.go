@@ -1,41 +1,52 @@
-package balance
+// package main
 
-import "fmt"
+// import (
+// 	"database/sql"
+// 	"fmt"
+// 	"strconv"
 
-var pereveod bool
-var summa int
+// 	"github.com/gin-gonic/gin"
+// 	_ "github.com/go-sql-driver/mysql"
+// )
 
-type User struct {
-	ID      int
-	name    string
-	surname string
-	balance int
-}
+// type User struct {
+// 	ID      int    `json:"id"`
+// 	Name    string `json:"name"`
+// 	Surname string `json:"surname"`
+// 	Balance int    `json:"balance"`
+// }
 
-var Users = []User{
-	{ID: 1, name: "Isa", surname: "Isaev", balance: 52},
-	{ID: 2, name: "Suleyma", surname: "Suleymanov", balance: 77},
-	{ID: 3, name: "Mag", surname: "Magov", balance: 14},
-}
+// var db *sql.DB
 
-func BalanceOperation(firstuserId int, seconduserId int, pereveod bool, summa int) {
-	var firstuser *User
-	var seconduser *User
-	for i := range Users {
-		if Users[i].ID == firstuserId {
-			firstuser = &Users[i]
-		}
-		if Users[i].ID == seconduserId {
-			seconduser = &Users[i]
-		}
-	}
-	if pereveod == true {
-		firstuser.balance += summa
-		seconduser.balance -= summa
-	}
-	fmt.Println(firstuser)
-	fmt.Println(seconduser)
-}
+// func TransferBalanceHandler(c *gin.Context) {
+// 	firstUserID, _ := strconv.Atoi(c.PostForm("firstUserID"))
+// 	secondUserID, _ := strconv.Atoi(c.PostForm("secondUserID"))
+// 	summa, _ := strconv.Atoi(c.PostForm("summa"))
+// 	perevod, _ := strconv.ParseBool(c.PostForm("perevod"))
 
-//сделать так, чтобы они переводили деньги друг другу, когда алекс переводит 500 у
-// боба увеличивается счет на 500, а если боб переводит 500 у боба уменьшается счет на 500
+// 	firstUser := GetUserFromDB(firstUserID)
+// 	secondUser := GetUserFromDB(secondUserID)
+
+// 	if perevod {
+// 		if firstUser.Balance >= summa {
+// 			firstUser.Balance -= summa
+// 			secondUser.Balance += summa
+
+// 			UpdateUserBalanceInDB(firstUser)
+// 			UpdateUserBalanceInDB(secondUser)
+
+// 			c.JSON(200, gin.H{"message": "Transfer successful"})
+// 		} else {
+// 			c.JSON(400, gin.H{"error": "Insufficient balance"})
+// 		}
+// 	} else {
+// 		c.JSON(400, gin.H{"error": "Unsupported operation type"})
+// 	}
+// }
+
+// func UpdateUserBalanceInDB(user *User) {
+// 	_, err := db.Exec("UPDATE users SET balance = ? WHERE id = ?", user.Balance, user.ID)
+// 	if err != nil {
+// 		fmt.Println("Error updating user balance in the database:", err)
+// 	}
+// }

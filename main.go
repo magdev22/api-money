@@ -1,7 +1,6 @@
 package main
 
 import (
-	"api/balance"
 	database "api/db"
 	"api/routes"
 
@@ -21,7 +20,5 @@ func main() {
 	routes.SetupRoutes(router, db)
 
 	router.Run(":8080")
-
-	balance.BalanceOperation(1, 2, true, 500)
 
 }

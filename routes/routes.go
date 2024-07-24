@@ -16,4 +16,5 @@ func SetupRoutes(router *gin.Engine, db *sql.DB) {
 	router.POST("/user", userHandler.CreateUser)
 	router.PUT("/updateuser/:id", userHandler.UpdateUser)
 	router.DELETE("/deleteuser/:id", userHandler.DeleteUserById)
+	router.POST("/transfer", userHandler.TransferBalanceHandler)
 }
