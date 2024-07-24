@@ -165,16 +165,16 @@ func (h *UserHandler) TransferBalanceHandler(c *gin.Context) {
 	}
 
 	if perevod {
-		if firstUser.Bill >= summa {
+		if firstUser.Bill >= summa && firstUser.ID != secondUser.ID {
 			firstUser.Bill -= summa
 			secondUser.Bill += summa
 
 			h.UpdateUserBalanceInDB(&firstUser)
 			h.UpdateUserBalanceInDB(&secondUser)
 
-			c.JSON(200, gin.H{"message": "Transfer successful"})
+			c.JSON(200, gin.H{"message": "Transfer successful, your balance: " + strconv.Itoa(firstUser.Bill)})
 		} else {
-			c.JSON(400, gin.H{"error": "Insufficient balance"})
+			c.JSON(400, gin.H{"error": "error transfer"})
 		}
 	} else {
 		c.JSON(400, gin.H{"error": "Unsupported operation type"})
@@ -182,10 +182,8 @@ func (h *UserHandler) TransferBalanceHandler(c *gin.Context) {
 }
 
 func (h *UserHandler) UpdateUserBalanceInDB(user *model.User) {
-	_, err := h.Db.Exec("UPDATE users SET balance = ? WHERE id = ?", user.Bill, user.ID)
+	_, err := h.Db.Exec("UPDATE users SET bill = ? WHERE id = ?", user.Bill, user.ID)
 	if err != nil {
 		fmt.Println("Error updating user balance in the database:", err)
 	}
-	fmt.Println("User balance updated successfully")
-
 }
