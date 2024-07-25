@@ -2,10 +2,10 @@
 curl -X GET http://localhost:8080/user
 
 ####
-curl -X GET http://localhost:8080/user/6
+curl -X GET http://localhost:8080/user/1
 
 ##### add user
-curl -X POST http://localhost:8080/user -d '{"name": "bob", "surname": "bobicov", "bill":400}'
+curl -X POST http://localhost:8080/user -d '{"name": "sergey", "surname": "sergeyevich", "bill":400}'
 
 #### udate user
 curl -X PUT http://localhost:8080/updateuser/2 -d '{"name": "bob", "surname": "bobicov", "bill": 500}'

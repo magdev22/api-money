@@ -1,7 +1,7 @@
 package main
 
 import (
-	database "api/db"
+	database "api/database"
 	"api/routes"
 
 	"github.com/gin-gonic/gin"

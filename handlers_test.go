@@ -2,7 +2,7 @@ package main
 
 import (
 	model "api/data"
-	conn "api/db"
+	conn "api/database"
 	handlers "api/handlers"
 	"bytes"
 	"encoding/json"
