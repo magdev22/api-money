@@ -6,6 +6,4 @@ CREATE TABLE users (
     username VARCHAR(20),
     usersurname VARCHAR(20),
     bill INT
-);
-
-   
+)
