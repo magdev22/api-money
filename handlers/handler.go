@@ -15,12 +15,28 @@ type UserHandler struct {
 	Db *sql.DB
 }
 
-var querryString = "CREATE TABLE users (id INT AUTO_INCREMENT PRIMARY KEY,name VARCHAR(20),surname VARCHAR(20),bill INT(20))"
+func (h *UserHandler) CreateDatabaseUsers(c *gin.Context) {
+	dbName := c.Param("db")
+	if dbName == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Database name parameter is required"})
+		return
+	}
 
-func (h *UserHandler) CreateTableUsers(c *gin.Context) {
-	rows, err := h.Db.Query(querryString)
+	_, err := h.Db.Exec("CREATE DATABASE IF NOT EXISTS " + dbName)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error creating database"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Database created successfully"})
+}
+
+func (h *UserHandler) CreateTableUsers(c *gin.Context) {
+	tablename := c.Param("table")
+
+	rows, err := h.Db.Query("CREATE TABLE " + tablename + " (id INT AUTO_INCREMENT PRIMARY KEY,name VARCHAR(20),surname VARCHAR(20),bill INT(20))")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error creating users table"})
 		return
 	}
 	defer rows.Close()
@@ -34,7 +50,10 @@ func (h *UserHandler) CreateTableUsers(c *gin.Context) {
 		}
 		users = append(users, user)
 	}
+	c.JSON(http.StatusOK, gin.H{"message": "table created successfully"})
+
 }
+
 func (h *UserHandler) GetAllUsers(c *gin.Context) {
 	rows, err := h.Db.Query("SELECT * FROM users")
 	if err != nil {

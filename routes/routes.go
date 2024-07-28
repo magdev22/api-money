@@ -9,8 +9,10 @@ import (
 
 func SetupRoutes(router *gin.Engine, db *sql.DB) {
 	userHandler := handlers.UserHandler{Db: db}
-
-	router.GET("/table", userHandler.CreateTableUsers)
+	//creating database and table
+	router.POST("/database/:db", userHandler.CreateDatabaseUsers)
+	router.POST("/table/:table", userHandler.CreateTableUsers)
+	//user routes
 	router.GET("/user", userHandler.GetAllUsers)
 	router.GET("/user/:id", userHandler.GetUserById)
 	router.POST("/user", userHandler.CreateUser)

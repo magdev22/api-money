@@ -105,6 +105,6 @@ func TestHandlers(t *testing.T) {
 	t.Run("TestCreateUser", TestCreateUser)
 	t.Run("TestGetAllUsers", TestGetAllUsers)
 	t.Run("TestGetUserById", TestGetUserById)
-	t.Run("TestDeleteUserById", TestDeleteUserById)
 	t.Run("TestUpdateUser", TestUpdateUser)
+	t.Run("TestDeleteUserById", TestDeleteUserById)
 }
